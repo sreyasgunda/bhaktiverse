@@ -47,7 +47,7 @@
 
         .temple-title {
             font-family: 'Cinzel', serif;
-            font-size: 3rem;
+            font-size: clamp(2rem, 6vw, 3rem);
             font-weight: 700;
             background: linear-gradient(to right, var(--gold-light), #f472b6, var(--saffron-main));
             -webkit-background-clip: text;
@@ -192,7 +192,7 @@
         }
 
         .panel-title {
-            font-size: 1.8rem;
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
             font-weight: 600;
             color: var(--gold-light);
             display: flex;
@@ -712,6 +712,68 @@
         .temple-btn:hover {
             border-color: var(--saffron-main);
             color: var(--saffron-main);
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 768px) {
+            .temple-banner {
+                padding: 1.5rem 0 1rem 0;
+            }
+            .position-absolute.top-0.end-0 {
+                position: static !important;
+                justify-content: center;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+            }
+            .feature-card {
+                padding: 1.5rem;
+            }
+            .content-panel {
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+            .decor-mandala {
+                width: 300px;
+                height: 300px;
+                top: -50px;
+                right: -50px;
+                opacity: 0.4;
+            }
+            .decor-mandala-2 {
+                width: 300px;
+                height: 300px;
+                bottom: -50px;
+                left: -50px;
+                opacity: 0.4;
+            }
+            .progress-circle-container {
+                width: 150px;
+                height: 150px;
+            }
+            .progress-svg {
+                width: 150px;
+                height: 150px;
+            }
+            .progress-circle-bg, .progress-circle-fill {
+                cx: 75;
+                cy: 75;
+                r: 65;
+            }
+            .chat-container {
+                height: 400px;
+            }
+            .btn-submit-sadhana {
+                font-size: 1rem;
+            }
+            .seva-card {
+                padding: 1.5rem;
+            }
+            .seva-title {
+                font-size: 1.25rem;
+            }
+            .stat-number {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>

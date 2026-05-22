@@ -81,7 +81,7 @@
         }
 
         .brand-logo {
-            font-size: 2.8rem;
+            font-size: clamp(2rem, 6vw, 2.8rem);
             font-weight: 700;
             background: linear-gradient(to right, #f59e0b, #ec4899);
             -webkit-background-clip: text;
@@ -100,7 +100,7 @@
 
         .brand-subtitle {
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: clamp(0.85rem, 3vw, 1rem);
             font-weight: 300;
         }
 
@@ -181,6 +181,34 @@
             border-radius: 12px;
             padding: 1rem;
             margin-bottom: 2rem;
+        }
+
+        /* Responsive Media Queries */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 10px;
+            }
+            .login-card {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+            .decor-circle-1 {
+                width: 200px;
+                height: 200px;
+                top: -30px;
+                right: -30px;
+                opacity: 0.4;
+            }
+            .decor-circle-2 {
+                width: 250px;
+                height: 250px;
+                bottom: -50px;
+                left: -50px;
+                opacity: 0.4;
+            }
+            .brand-header {
+                margin-bottom: 1.5rem;
+            }
         }
     </style>
 </head>
