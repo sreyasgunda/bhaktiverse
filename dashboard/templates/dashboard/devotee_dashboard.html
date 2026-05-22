@@ -775,6 +775,32 @@
                 font-size: 1.8rem;
             }
         }
+    
+    <style>
+        /* Mobile overrides for Devotee Dashboard */
+        @media (max-width: 768px) {
+            .feature-card {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+                padding: 1.5rem !important;
+            }
+            .content-panel {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+                padding: 1.5rem !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .feature-card {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .content-panel {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .decor-mandala, .decor-mandala-2 { display: none !important; }
+        }
     </style>
 </head>
 

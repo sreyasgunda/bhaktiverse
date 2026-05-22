@@ -116,7 +116,33 @@
                 margin-bottom: 1rem;
             }
         }
+    
+    <style>
+        /* Mobile overrides for Leader Dashboard */
+        @media (max-width: 768px) {
+            .dashboard-card {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+                padding: 1.5rem !important;
+            }
+            .content-panel {
+                backdrop-filter: blur(8px) !important;
+                -webkit-backdrop-filter: blur(8px) !important;
+                padding: 1.5rem !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .dashboard-card {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .content-panel {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+        }
     </style>
+
 </head>
 <body>
     <div class="dashboard-container">
