@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BhaktiVerse - Devotee Spiritual Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cinzel:wght@500;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --saffron-main: #f97316;
+            --saffron-light: #ffedd5;
+            --saffron-dark: #ea580c;
+            --gold-light: #fbbf24;
+            --gold-main: #d97706;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #090d16 0%, #17112d 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 5rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Temple Header Styling */
+        .temple-banner {
+            background: linear-gradient(to bottom, rgba(234, 88, 12, 0.15), rgba(9, 13, 22, 0));
+            padding: 2.5rem 0 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+        }
+
+        .temple-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--gold-light), #f472b6, var(--saffron-main));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .temple-subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        /* Decorative Background Ornaments */
+        .decor-mandala {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0) 70%);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .decor-mandala-2 {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(99, 102, 241, 0) 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Dashboard Grid & Cards */
+        .feature-grid {
+            z-index: 10;
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(245, 158, 11, 0.5);
+            box-shadow: 0 20px 45px rgba(245, 158, 11, 0.2);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .feature-card.active {
+            border-color: var(--saffron-main);
+            background: rgba(234, 88, 12, 0.1);
+            box-shadow: 0 0 25px rgba(234, 88, 12, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .feature-title {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Detail Panel Sections */
+        .content-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            padding: 3rem;
+            margin-top: 3rem;
+            z-index: 10;
+            position: relative;
+            display: none;
+            /* Controlled via JS */
+        }
+
+        .content-panel.active-panel {
+            display: block;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Notification Bells & Popups dropdown styling */
+        .notification-bell-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .notification-bell-btn:hover {
+            border-color: var(--saffron-main);
+            color: var(--saffron-main);
+            background: rgba(234, 88, 12, 0.1);
+        }
+
+        .bell-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #090d16;
+            animation: pulseBadge 1.5s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .notification-dropdown {
+            min-width: 320px;
+            max-width: 380px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+
+        .notification-item.unread {
+            border-left: 3px solid var(--saffron-main);
+            background: rgba(234, 88, 12, 0.05);
+        }
+
+        .notification-msg {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.35;
+        }
+
+        .notification-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Sadhana Entry Form Styling */
+        .form-label {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            background: rgba(15, 23, 42, 0.8) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-primary) !important;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--saffron-main) !important;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+            outline: none;
+        }
+
+        .option-button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .option-btn {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+            color: var(--text-primary);
+        }
+
+        .option-btn.selected {
+            background: var(--saffron-main);
+            color: #0f172a;
+            border-color: var(--saffron-main);
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+        }
+
+        .btn-submit-sadhana {
+            background: linear-gradient(135deg, var(--saffron-main) 0%, var(--saffron-dark) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 0.9rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #0f172a;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+            margin-top: 2rem;
+        }
+
+        .btn-submit-sadhana:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(249, 115, 22, 0.5);
+            background: linear-gradient(135deg, #fbbf24 0%, var(--gold-main) 100%);
+        }
+
+        /* Seva Duty Card */
+        .seva-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .seva-card:hover {
+            border-color: rgba(245, 158, 11, 0.3);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .seva-card.completed {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .seva-header-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .seva-badge {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--gold-light);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 8px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .seva-badge.done {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .seva-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .seva-time {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .btn-done-seva {
+            background: transparent;
+            border: 1px solid #10b981;
+            color: #10b981;
+            border-radius: 10px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-done-seva:hover {
+            background: #10b981;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Custom Popup Toast styling */
+        .temple-toast {
+            background: rgba(15, 23, 42, 0.9) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(245, 158, 11, 0.4) !important;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            color: var(--text-primary);
+        }
+
+        .temple-toast-header {
+            background: rgba(234, 88, 12, 0.15) !important;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.2) !important;
+            color: var(--gold-light) !important;
+            border-top-left-radius: 13px;
+            border-top-right-radius: 13px;
+        }
+
+        /* Spiritual Progress Charts & Statistics */
+        .progress-circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .progress-svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 12px;
+        }
+
+        .progress-circle-fill {
+            fill: none;
+            stroke: url(#saffronGradient);
+            stroke-width: 12px;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        .progress-text-overlay {
+            position: absolute;
+            text-align: center;
+        }
+
+        .progress-percentage {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            line-height: 1;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 1.5rem;
+            text-align: center;
+            height: 100%;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--saffron-main);
+        }
+
+        .stat-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Bhakti AI Guide Chatbot ChatGPT-Style Interface */
+        .chat-container {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            height: 520px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-history {
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 1rem 1.4rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .chat-bubble.user {
+            background: linear-gradient(135deg, var(--saffron-main) 0%, var(--saffron-dark) 100%);
+            color: #0f172a;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            font-weight: 500;
+        }
+
+        .chat-bubble.ai {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-area {
+            background: rgba(15, 23, 42, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.2rem;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background: rgba(9, 13, 22, 0.7) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-primary) !important;
+            border-radius: 14px;
+            padding: 0.85rem 1.4rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-send-chat {
+            background: var(--saffron-main);
+            color: #0f172a;
+            border: none;
+            border-radius: 14px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-send-chat:hover {
+            background: #fbbf24;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(251, 191, 36, 0.4);
+        }
+
+        .quick-question-btn {
+            background: rgba(245, 158, 11, 0.08);
+            color: var(--gold-light);
+            border: 1px solid rgba(245, 158, 11, 0.15);
+            padding: 0.45rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-question-btn:hover {
+            background: rgba(245, 158, 11, 0.18);
+            border-color: var(--saffron-main);
+            color: var(--text-primary);
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.8rem 1.4rem;
+            border-radius: 20px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: bounceDot 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounceDot {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Success alerts */
+        .alert-success-custom {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #a7f3d0;
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .temple-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.6rem 1.25rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .temple-btn:hover {
+            border-color: var(--saffron-main);
+            color: var(--saffron-main);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Global SVG Gradient Definitions (Required for background resolution when elements are hidden) -->
+    <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
+        <defs>
+            <linearGradient id="saffronGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f97316" />
+                <stop offset="100%" stop-color="#fbbf24" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="decor-mandala"></div>
+    <div class="decor-mandala-2"></div>
+
+    <!-- Main Header Bar -->
+    <header class="temple-banner">
+        <div class="container position-relative">
+            <div class="position-absolute top-0 end-0 d-flex align-items-center gap-3">
+                <!-- Notifications Bell Dropdown -->
+                <div class="dropdown">
+                    <div class="notification-bell-btn dropdown-toggle" id="bellDropdown" data-bs-toggle="dropdown"
+                        aria-expanded="false" onclick="dismissInboxBadge()">
+                        <div class="fa-solid fa-bell fs-5"></div>
+                        <span class="bell-badge" id="bell-badge-count"
+                            style="{% if unread_notifications_count == 0 %}display: none;{% endif %}">
+                            {{ unread_notifications_count|default:"0" }}
+                        </span>
+                    </div>
+
+                    <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="bellDropdown"
+                        id="bell-notifications-list">
+                        <div
+                            class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary">
+                            <h6 class="mb-0 text-warning" style="font-weight: 600;"><i
+                                    class="fa-solid fa-bell me-1.5"></i> Devotional Alerts</h6>
+                            <button class="btn btn-sm btn-outline-warning py-0 px-2" style="font-size: 0.8rem;"
+                                onclick="markAllNotificationsAsRead()">Clear All</button>
+                        </div>
+
+                        <div id="bell-notifications-container" style="max-height: 250px; overflow-y: auto;">
+                            {% for notif in notifications %}
+                            <li class="notification-item {% if not notif.is_read %}unread{% endif %}">
+                                <div class="notification-msg">{{ notif.message }}</div>
+                                <small class="notification-time">{{ notif.created_at|date:"g:i A" }}</small>
+                            </li>
+                            {% empty %}
+                            <div class="text-muted text-center py-4" id="bell-empty-msg">No alerts logged today.</div>
+                            {% endfor %}
+                        </div>
+                    </ul>
+                </div>
+
+                <button class="temple-btn me-2" id="outOfStationBtn" onclick="toggleOutOfStation()">
+                    <i class="fa-solid fa-plane-departure me-2 text-warning"></i>
+                    <span id="oosStatusText">{% if user.profile.is_out_of_station %}In Station{% else %}Out of Station{% endif %}</span>
+                </button>
+                <a href="{% url 'logout' %}" class="temple-btn">
+                    <i class="fa-solid fa-power-off me-2 text-danger"></i> Log Out
+                </a>
+            </div>
+
+            <div class="temple-title">BhaktiVerse</div>
+            <div class="temple-subtitle">Hare Krishna, Devotee {{ user.name }} • Elevate Your Sadhana</div>
+        </div>
+    </header>
+
+    <!-- Floating Live Toast Alert Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1200;" id="toast-wrapper"></div>
+
+    <div class="container mt-4">
+        <!-- Messages/Alert Banner -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert-success-custom">
+            <i class="fa-solid fa-circle-check fs-4"></i>
+            <div>
+                <strong style="color: #10b981;">{{ message }}</strong>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Tab Buttons Cards Layout -->
+        <section class="feature-grid">
+            <div class="row g-4">
+                <!-- Sadhana Tracker Card -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card active" onclick="activatePanel('sadhana-panel', this)">
+                        <div class="feature-icon">🪔</div>
+                        <h4 class="feature-title">Sadhana Tracker</h4>
+                        <p class="feature-desc">Track Mangal Aarti, rounds chanted, and daily readings.</p>
+                    </div>
+                </div>
+
+                <!-- Seva Duties Card -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card" onclick="activatePanel('seva-panel', this)">
+                        <div class="feature-icon">🧹</div>
+                        <h4 class="feature-title">Seva Duties</h4>
+                        <p class="feature-desc">View assigned duties, times, and mark completions.</p>
+                    </div>
+                </div>
+
+                <!-- Spiritual Progress Card -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card" onclick="activatePanel('progress-panel', this)">
+                        <div class="feature-icon">📊</div>
+                        <h4 class="feature-title">Spiritual Progress</h4>
+                        <p class="feature-desc">Analyze daily charts and overall monthly logs.</p>
+                    </div>
+                </div>
+
+                <!-- Bhakti AI Guide Card -->
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-card" onclick="activatePanel('chat-panel', this)">
+                        <div class="feature-icon">🤖</div>
+                        <h4 class="feature-title">Bhakti AI Guide</h4>
+                        <p class="feature-desc">Acquire Vedic wisdom and guidance from the AI guide.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 1. SADHANA TRACKER PANEL ==================== -->
+        <section id="sadhana-panel" class="content-panel active-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">🪔 Sadhana Tracker</h3>
+                <button class="btn btn-outline-warning" onclick="toggleSadhanaForm()">
+                    <i class="fa-solid fa-plus-circle me-1"></i> Update Today’s Sadhana
+                </button>
+            </div>
+
+            <!-- Sadhana Form Container (Default Hidden until clicked) -->
+            <div id="sadhana-form-container" style="display: none;"
+                class="mt-4 p-4 border border-warning rounded-4 bg-dark">
+                <h4 class="mb-4 text-center text-warning font-weight-bold" style="font-family: 'Cinzel', serif;">
+                    FOLK Residency Sadhana Entry
+                </h4>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <!-- Sadhana Date -->
+                        <div class="col-md-6 mb-3">
+                            <label for="sadhana_date" class="form-label">Sadhana Date *</label>
+                            <input type="text" name="sadhana_date" id="sadhana_date" class="form-control"
+                                placeholder="e.g. 12 August 2026" required>
+                            <small class="text-muted">Format: d mmmm yyyy (e.g. 12 August 2026)</small>
+                        </div>
+
+                        <!-- FOLK Residency Dropdown -->
+                        <div class="col-md-6 mb-3">
+                            <label for="folk_residency" class="form-label">Choose your FOLK Residency *</label>
+                            <select name="folk_residency" id="folk_residency" class="form-select" required>
+                                <option value="Gandipet">Gandipet</option>
+                                <option value="KPHP">KPHP</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Mangal Aarthi Select Buttons -->
+                    <div class="mb-4">
+                        <label class="form-label d-block">Mangal Aarthi (Today) *</label>
+                        <div class="option-button-group" id="mangal-aarti-group">
+                            <input type="hidden" name="mangal_aarti" id="mangal_aarti_val" value="0">
+                            <div class="option-btn" onclick="selectOption('mangal_aarti', '4')">4</div>
+                            <div class="option-btn" onclick="selectOption('mangal_aarti', '3')">3</div>
+                            <div class="option-btn" onclick="selectOption('mangal_aarti', '2')">2</div>
+                            <div class="option-btn" onclick="selectOption('mangal_aarti', '1')">1</div>
+                            <div class="option-btn selected" onclick="selectOption('mangal_aarti', '0')">0</div>
+                            <div class="option-btn" onclick="selectOption('mangal_aarti', 'OS')">OS</div>
+                            <div class="option-btn" onclick="selectOption('mangal_aarti', 'Sick')">Sick</div>
+                            <div class="option-btn" onclick="selectOption('mangal_aarti', 'AS')">AS</div>
+                        </div>
+                    </div>
+
+                    <!-- Group Japa Select Buttons -->
+                    <div class="mb-4">
+                        <label class="form-label d-block">Group Japa (Today) *</label>
+                        <div class="option-button-group" id="group-japa-group">
+                            <input type="hidden" name="group_japa" id="group_japa_val" value="0">
+                            <div class="option-btn" onclick="selectOption('group_japa', '4')">4</div>
+                            <div class="option-btn" onclick="selectOption('group_japa', '3')">3</div>
+                            <div class="option-btn" onclick="selectOption('group_japa', '2')">2</div>
+                            <div class="option-btn" onclick="selectOption('group_japa', '1')">1</div>
+                            <div class="option-btn selected" onclick="selectOption('group_japa', '0')">0</div>
+                            <div class="option-btn" onclick="selectOption('group_japa', 'OS')">OS</div>
+                            <div class="option-btn" onclick="selectOption('group_japa', 'Sick')">Sick</div>
+                            <div class="option-btn" onclick="selectOption('group_japa', 'AS')">AS</div>
+                        </div>
+                    </div>
+
+                    <!-- SB Class Select Buttons -->
+                    <div class="mb-4">
+                        <label class="form-label d-block">SB Class (Today) *</label>
+                        <div class="option-button-group" id="sb-class-group">
+                            <input type="hidden" name="sb_class" id="sb_class_val" value="0">
+                            <div class="option-btn" onclick="selectOption('sb_class', '2')">2</div>
+                            <div class="option-btn" onclick="selectOption('sb_class', '1')">1</div>
+                            <div class="option-btn selected" onclick="selectOption('sb_class', '0')">0</div>
+                            <div class="option-btn" onclick="selectOption('sb_class', 'OS')">OS</div>
+                            <div class="option-btn" onclick="selectOption('sb_class', 'Sick')">Sick</div>
+                            <div class="option-btn" onclick="selectOption('sb_class', 'AS')">AS</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Chanting No. of Rounds Dropdown -->
+                        <div class="col-md-6 mb-3">
+                            <label for="rounds_chanted" class="form-label">Chanting No. of Rounds (Previous Day)
+                                *</label>
+                            <select name="rounds_chanted" id="rounds_chanted" class="form-select" required>
+                                <option value="16" selected>16 Rounds</option>
+                                <option value="15">15 Rounds</option>
+                                <option value="14">14 Rounds</option>
+                                <option value="13">13 Rounds</option>
+                                <option value="12">12 Rounds</option>
+                                <option value="11">11 Rounds</option>
+                                <option value="10">10 Rounds</option>
+                                <option value="9">9 Rounds</option>
+                                <option value="8">8 Rounds</option>
+                                <option value="7">7 Rounds</option>
+                                <option value="6">6 Rounds</option>
+                                <option value="5">5 Rounds</option>
+                                <option value="4">4 Rounds</option>
+                                <option value="3">3 Rounds</option>
+                                <option value="2">2 Rounds</option>
+                                <option value="1">1 Round</option>
+                            </select>
+                        </div>
+
+                        <!-- Book Reading -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label d-block">Srila Prabhupada Book Reading (Previous Day) *</label>
+                            <div class="option-button-group" id="sp-reading-group">
+                                <input type="hidden" name="sp_reading" id="sp_reading_val" value="0">
+                                <div class="option-btn" onclick="selectOption('sp_reading', '4')">4</div>
+                                <div class="option-btn" onclick="selectOption('sp_reading', '3')">3</div>
+                                <div class="option-btn" onclick="selectOption('sp_reading', '2')">2</div>
+                                <div class="option-btn" onclick="selectOption('sp_reading', '1')">1</div>
+                                <div class="option-btn selected" onclick="selectOption('sp_reading', '0')">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assigned Service -->
+                    <div class="mb-4">
+                        <label class="form-label d-block">Assigned Service (Previous Day) *</label>
+                        <div class="option-button-group" id="assigned-service-group">
+                            <input type="hidden" name="assigned_service" id="assigned_service_val" value="0">
+                            <div class="option-btn" onclick="selectOption('assigned_service', '1')">1</div>
+                            <div class="option-btn selected" onclick="selectOption('assigned_service', '0')">0</div>
+                            <div class="option-btn" onclick="selectOption('assigned_service', 'OS')">OS</div>
+                            <div class="option-btn" onclick="selectOption('assigned_service', 'Sick')">Sick</div>
+                            <div class="option-btn" onclick="selectOption('assigned_service', 'AS')">AS</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit-sadhana">
+                        <i class="fa-solid fa-circle-check me-2"></i> Submit Sadhana Details
+                    </button>
+                </form>
+            </div>
+
+            <!-- Info text -->
+            <div class="mt-5 p-4 rounded-4"
+                style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.1);">
+                <h5 class="text-warning"><i class="fa-solid fa-circle-info me-2"></i> Daily Sadhana Practice</h5>
+                <p class="mb-0 text-secondary" style="font-size: 0.95rem;">
+                    Regular entries keep your spiritual goals synchronized. The Gandipet and KPHP FOLK communities
+                    utilize this tracking system to optimize devotee services, classes, and morning attendance stats.
+                </p>
+            </div>
+        </section>
+
+        <!-- ==================== 2. MY SEVA DUTIES PANEL ==================== -->
+        <section id="seva-panel" class="content-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">🧹 Seva Duties</h3>
+            </div>
+
+            <!-- List Sevas -->
+            <div class="row">
+                <div class="col-12">
+                    {% for seva in sevas %}
+                    <div class="seva-card {% if seva.is_completed %}completed{% endif %}" id="seva-card-{{ seva.id }}">
+                        <div class="seva-header-line">
+                            <span class="seva-badge {% if seva.is_completed %}done{% endif %}"
+                                id="seva-badge-{{ seva.id }}">
+                                {% if seva.is_completed %}
+                                <i class="fa-solid fa-check-circle me-1"></i> Completed
+                                {% else %}
+                                <i class="fa-solid fa-clock me-1"></i> Assigned Duty
+                                {% endif %}
+                            </span>
+                            <div class="text-secondary" style="font-size: 0.9rem;">
+                                <i class="fa-regular fa-calendar me-1"></i> Today
+                            </div>
+                        </div>
+
+                        <h4 class="seva-title">{{ seva.title }}</h4>
+                        <p class="seva-time">
+                            <i class="fa-regular fa-clock me-1 text-warning"></i>
+                            Time: <strong class="text-light">{{ seva.start_time|date:"g:i A" }} – {{ seva.end_time|date:"g:i A" }}</strong>
+                        </p>
+
+                        {% if not seva.is_completed %}
+                        <div class="mt-4 text-end" id="seva-action-area-{{ seva.id }}">
+                            <button class="btn btn-done-seva" onclick="markSevaCompleted({{ seva.id }})">
+                                <div class="fa-solid fa-circle-check me-2"></div> Mark as Done
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center py-4">No active Seva duties assigned for today.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 3. SPIRITUAL PROGRESS PANEL ==================== -->
+        <section id="progress-panel" class="content-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">📊 Spiritual Progress</h3>
+            </div>
+
+            <div class="row g-4">
+                <!-- Circular Chart Gauge -->
+                <div class="col-md-6">
+                    <div class="stat-card d-flex flex-column align-items-center justify-content-center py-5">
+                        <h5 class="text-warning mb-4"><i class="fa-solid fa-chart-pie me-2"></i> Monthly Sadhana Progress</h5>
+
+                        <div class="progress-circle-container">
+                            <svg class="progress-svg" width="200" height="200">
+                                <circle class="progress-circle-bg" cx="100" cy="100" r="85" />
+                                <circle class="progress-circle-fill" id="progress-circle" cx="100" cy="100" r="85"
+                                    stroke-dasharray="534" stroke-dashoffset="534" />
+                            </svg>
+                            <div class="progress-text-overlay">
+                                <div class="progress-percentage"><span id="progress-percent-val">{{ stats.percentage_completed|default:"0"|floatformat:0 }}</span>%</div>
+                                <div class="progress-label">Sadhana Score</div>
+                            </div>
+                        </div>
+
+                        <div class="text-secondary mt-2 text-center">
+                            <strong style="color: var(--gold-light);">{{ stats.total_submitted_days|default:"0" }} / 30 days</strong> completed
+                        </div>
+                        
+                        <!-- Beautiful saffron-to-gold progressive bar for total submitted days -->
+                        <div class="progress mt-3 d-flex align-self-center" style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; width: 80%;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: {% widthratio stats.total_submitted_days|default:0 30 100 %}%; background: linear-gradient(90deg, #f97316, #fbbf24); border-radius: 4px; transition: width 1s ease-in-out;"
+                                 aria-valuenow="{{ stats.total_submitted_days|default:0 }}" aria-valuemin="0" aria-valuemax="30">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily logs stats -->
+                <div class="col-md-6">
+                    <div class="stat-card">
+                        <h5 class="text-warning mb-4 text-start"><i class="fa-solid fa-list-check me-2"></i> Recent Daily Attendance Logs</h5>
+
+                        <div style="max-height: 300px; overflow-y: auto;" class="text-start">
+                            {% for entry in sadhana_entries %}
+                            <div class="p-3 mb-2 rounded-3"
+                                style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                <div class="d-flex justify-content-between">
+                                    <strong style="color: var(--gold-light);">{{ entry.sadhana_date|date:"d F Y" }}</strong>
+                                    <span class="badge bg-warning text-dark">{{ entry.rounds_chanted }} Rounds</span>
+                                </div>
+                                <div class="text-secondary mt-1" style="font-size: 0.85rem;">
+                                    Mangal: {{ entry.mangal_aarti }} | Japa: {{ entry.group_japa }} | SB: {{ entry.sb_class }} | Reading: {{ entry.sp_reading }} | Service: {{ entry.assigned_service }}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted text-center py-4">No daily sadhana logs recorded yet. Submit sadhana using the Sadhana Tracker tab!</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 4. BHAKTI AI GUIDE PANEL ==================== -->
+        <section id="chat-panel" class="content-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">🤖 Bhakti AI Guide</h3>
+                <div class="text-secondary" style="font-size: 0.9rem;">
+                    <i class="fa-solid fa-om text-warning me-1"></i> Conversational Spiritual Guide
+                </div>
+            </div>
+
+            <!-- Quick example questions -->
+            <div class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+                <span class="text-secondary" style="font-size: 0.9rem; font-weight: 500;">Ask about:</span>
+                <button class="quick-question-btn" onclick="sendQuickQuestion('How to chant better?')">How to chant better?</button>
+                <button class="quick-question-btn" onclick="sendQuickQuestion('Why is chanting important?')">Why chant?</button>
+                <button class="quick-question-btn"
+                    onclick="sendQuickQuestion('What is the meaning of Bhagavad Gita 2.47?')">Meaning of Gita 2.47?</button>
+                <button class="quick-question-btn"
+                    onclick="sendQuickQuestion('I am feeling spiritually weak, what should I do?')">Feeling spiritually weak?</button>
+            </div>
+
+            <!-- Chat Window interface -->
+            <div class="chat-container">
+                <div class="chat-history" id="chat-history-container">
+                    <!-- AI Initial Message if history is empty -->
+                    {% if not chat_history %}
+                    <div class="chat-bubble ai">Hare Krishna! Welcome, Devotee {{ user.name }}. I am your Bhakti AI Guide. Please ask me any spiritual or philosophical questions to support your daily sadhana and seva practice. Feel free to type any query!</div>
+                    {% else %}
+                    {% for chat in chat_history %}
+                    <div class="chat-bubble user">{{ chat.message }}</div>
+                    <div class="chat-bubble ai">{{ chat.response|linebreaksbr }}</div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Typing indicator -->
+                <div class="typing-indicator" id="chat-typing-box">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+
+                <!-- Input area -->
+                <div class="chat-input-area">
+                    <input type="text" id="chat-message-input" class="chat-input"
+                        placeholder="Type any spiritual or devotional question..." onkeydown="handleChatEnter(event)">
+                    <button class="btn-send-chat" onclick="submitChatMessage()">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bootstrap 5 Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript logic -->
+    <script>
+        // Track already toasted notification IDs in the current session
+        const toastedNotifications = new Set();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set today's date formatted beautifully in form date input
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            const d = new Date();
+            const dateStr = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            const dateInput = document.getElementById('sadhana_date');
+            if (dateInput) {
+                dateInput.value = dateStr;
+            }
+
+            // Animate SVG Progress circle on load
+            animateProgressCircle();
+
+            // Scroll chat box to bottom
+            scrollChatToBottom();
+
+            // Run active polling for real-time background notifications (runs every 10 seconds)
+            pollUnreadNotifications();
+            setInterval(pollUnreadNotifications, 10000);
+        });
+
+        // Toggle active panels/tabs
+        function activatePanel(panelId, cardElement) {
+            document.querySelectorAll('.feature-card').forEach(card => card.classList.remove('active'));
+            cardElement.classList.add('active');
+
+            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active-panel'));
+            document.getElementById(panelId).classList.add('active-panel');
+
+            if (panelId === 'chat-panel') {
+                setTimeout(scrollChatToBottom, 100);
+            }
+            if (panelId === 'progress-panel') {
+                setTimeout(animateProgressCircle, 50);
+            }
+        }
+
+        // Toggle sadhana form visibility
+        function toggleSadhanaForm() {
+            const form = document.getElementById('sadhana-form-container');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                form.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        // Custom choice button select helper (Improved: cross-browser standard compliant, no deprecated global event object reliance)
+        function selectOption(fieldName, value) {
+            document.getElementById(`${fieldName}_val`).value = value;
+            const group = document.getElementById(`${fieldName.replace('_', '-')}-group`);
+            group.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent.trim() === String(value)) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+
+        // Complete Seva Duty handler
+        function markSevaCompleted(sevaId) {
+            const csrfToken = '{{ csrf_token }}';
+            const url = `/dashboard/devotee/seva/complete/${sevaId}/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update UI state to completed
+                        const card = document.getElementById(`seva-card-${sevaId}`);
+                        if (card) card.classList.add('completed');
+
+                        const badge = document.getElementById(`seva-badge-${sevaId}`);
+                        if (badge) {
+                            badge.className = 'seva-badge done';
+                            badge.innerHTML = '<i class="fa-solid fa-check-circle me-1"></i> Completed';
+                        }
+
+                        const actionArea = document.getElementById(`seva-action-area-${sevaId}`);
+                        if (actionArea) actionArea.remove();
+
+                        // Re-query unread notifications to refresh inbox list immediately
+                        pollUnreadNotifications();
+                    }
+                })
+                .catch(err => console.error("Error completing seva: ", err));
+        }
+
+        // Active Notifications Polling Loop (fetches from APScheduler database entries)
+        function pollUnreadNotifications() {
+            fetch('/dashboard/notifications/unread/')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const listContainer = document.getElementById('bell-notifications-container');
+                        const badge = document.getElementById('bell-badge-count');
+                        const count = data.notifications.length;
+
+                        // 1. Update Bell badge count
+                        if (count > 0) {
+                            badge.innerText = count;
+                            badge.style.display = 'flex';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+
+                        // 2. Build Bell dropdown lists
+                        let html = '';
+                        data.notifications.forEach(notif => {
+                            html += `
+                            <li class="notification-item unread">
+                                <div class="notification-msg">${notif.message}</div>
+                                <small class="notification-time">${notif.created_at}</small>
+                            </li>
+                        `;
+
+                            // 3. Trigger Toast popup if not toasted in this session yet
+                            if (!toastedNotifications.has(notif.id)) {
+                                toastedNotifications.add(notif.id);
+                                triggerPopupToast(notif.message);
+                            }
+                        });
+
+                        if (count > 0) {
+                            listContainer.innerHTML = html;
+                        } else {
+                            listContainer.innerHTML = '<div class="text-muted text-center py-4" id="bell-empty-msg">No alerts logged today.</div>';
+                        }
+                    }
+                })
+                .catch(err => console.error("Error polling notifications: ", err));
+        }
+
+        // Trigger dynamic Bootstrap Popup Toast
+        function triggerPopupToast(messageText) {
+            const container = document.getElementById('toast-wrapper');
+            const toastId = 'toast-' + Date.now();
+
+            const html = `
+                <div class="toast temple-toast show" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                    <div class="toast-header temple-toast-header d-flex justify-content-between">
+                        <strong class="me-auto"><i class="fa-solid fa-bell me-1"></i> Spiritual Reminder</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" style="font-size: 0.95rem; font-weight: 500; line-height: 1.4;">
+                        ${messageText}
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', html);
+
+            // Auto hide toast after 8 seconds
+            setTimeout(() => {
+                const toastEl = document.getElementById(toastId);
+                if (toastEl) {
+                    const bsToast = bootstrap.Toast.getInstance(toastEl) || new bootstrap.Toast(toastEl);
+                    bsToast.hide();
+                    setTimeout(() => toastEl.remove(), 500);
+                }
+            }, 8000);
+        }
+
+        // Generic showToast helper for user alerts
+        function showToast(title, message, icon) {
+            const container = document.getElementById('toast-wrapper');
+            const toastId = 'toast-' + Date.now();
+            const iconHtml = icon ? `<i class="fa-solid fa-${icon} me-2 text-warning"></i>` : '';
+
+            const html = `
+                <div class="toast temple-toast show" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                    <div class="toast-header temple-toast-header d-flex justify-content-between">
+                        <strong class="me-auto">${iconHtml}${title}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" style="font-size: 0.95rem; font-weight: 500; line-height: 1.4;">
+                        ${message}
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', html);
+
+            // Auto hide toast after 5 seconds
+            setTimeout(() => {
+                const toastEl = document.getElementById(toastId);
+                if (toastEl) {
+                    const bsToast = bootstrap.Toast.getInstance(toastEl) || new bootstrap.Toast(toastEl);
+                    bsToast.hide();
+                    setTimeout(() => toastEl.remove(), 500);
+                }
+            }, 5000);
+        }
+
+        // Dismiss unread bell badge count visually when bell dropdown is clicked
+        function dismissInboxBadge() {
+            // Visual helper, does not clear notifications in database until explicitly clicked "Clear All"
+            const badge = document.getElementById('bell-badge-count');
+            badge.style.display = 'none';
+        }
+
+        // Mark all notifications read in database
+        function markAllNotificationsAsRead() {
+            const csrfToken = '{{ csrf_token }}';
+            fetch('/dashboard/notifications/read/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update UI elements instantly
+                        document.getElementById('bell-badge-count').style.display = 'none';
+                        document.getElementById('bell-notifications-container').innerHTML = '<div class="text-muted text-center py-4" id="bell-empty-msg">No alerts logged today.</div>';
+                    }
+                })
+                .catch(err => console.error("Error clearing notifications: ", err));
+        }
+
+        // SVG progress bar animation
+        function animateProgressCircle() {
+            const percentEl = document.getElementById('progress-percent-val');
+            if (!percentEl) return;
+
+            let percent = percentEl.textContent.replace('%', '').trim();
+            percent = parseInt(percent) || 0;
+
+            const circle = document.getElementById('progress-circle');
+            if (circle) {
+                if (percent === 0) {
+                    circle.style.opacity = '0';
+                } else {
+                    circle.style.opacity = '1';
+                    const circumference = 534;
+                    const offset = circumference - (percent / 100) * circumference;
+                    circle.style.strokeDashoffset = offset;
+                }
+            }
+        }
+
+        // Scroll chat box
+        function scrollChatToBottom() {
+            const history = document.getElementById('chat-history-container');
+            if (history) {
+                history.scrollTop = history.scrollHeight;
+            }
+        }
+
+        // AI Chatbot handlers
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') {
+                submitChatMessage();
+            }
+        }
+
+        // Quick question sender
+        function sendQuickQuestion(questionText) {
+            document.getElementById('chat-message-input').value = questionText;
+            submitChatMessage();
+        }
+
+        function submitChatMessage() {
+            const input = document.getElementById('chat-message-input');
+            const messageText = input.value.trim();
+            if (!messageText) return;
+
+            input.value = '';
+
+            const history = document.getElementById('chat-history-container');
+
+            // Append User bubble
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble user';
+            userBubble.innerText = messageText;
+            history.appendChild(userBubble);
+
+            scrollChatToBottom();
+
+            // Display typing indicator
+            const typingBox = document.getElementById('chat-typing-box');
+            typingBox.style.display = 'flex';
+            scrollChatToBottom();
+
+            // Submit AJAX request
+            const csrfToken = '{{ csrf_token }}';
+            // Route to root-level /api/chat/ API endpoint as requested!
+            fetch('/api/chat/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: messageText })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    typingBox.style.display = 'none';
+
+                    if (data.status === 'success') {
+                        // Append AI reply bubble
+                        const aiBubble = document.createElement('div');
+                        aiBubble.className = 'chat-bubble ai';
+
+                        // Replace newlines with <br> inside JavaScript safely
+                        aiBubble.innerHTML = data.message.replace(/\n/g, '<br>');
+                        history.appendChild(aiBubble);
+
+                        scrollChatToBottom();
+                    }
+                })
+                .catch(err => {
+                    typingBox.style.display = 'none';
+                    console.error("Chat error: ", err);
+                });
+        }
+
+        function toggleOutOfStation() {
+            fetch("{% url 'dashboard:toggle_out_of_station' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const statusText = document.getElementById('oosStatusText');
+                        if (data.is_out_of_station) {
+                            statusText.innerText = 'In Station';
+                        } else {
+                            statusText.innerText = 'Out of Station';
+                        }
+                        showToast('Success', 'Out of Station status updated successfully.', 'check');
+                    }
+                });
+        }
+    </script>
+</body>
+
+</html>
