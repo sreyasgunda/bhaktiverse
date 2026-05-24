@@ -360,8 +360,21 @@ def send_daily_assignment_emails():
 
 
 def start_scheduler():
+    import os
+    from django.conf import settings
+    from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
-    scheduler = BackgroundScheduler()
+    db_url = os.environ.get('DATABASE_URL')
+    if not db_url:
+        db_url = f"sqlite:///{settings.BASE_DIR}/db.sqlite3"
+        # Convert to proper SQLAlchemy sqlite URL if it starts with sqlite:///
+        # but dj_database_url might give something else. Let's keep it simple.
+
+    jobstores = {
+        'default': SQLAlchemyJobStore(url=db_url)
+    }
+
+    scheduler = BackgroundScheduler(jobstores=jobstores)
 
     scheduler.add_job(
         scan_seva_duties,
@@ -398,4 +411,4 @@ def start_scheduler():
 
     scheduler.start()
 
-    print("BhaktiVerse Scheduler Started")
+    print("BhaktiVerse Persistent Scheduler Started")

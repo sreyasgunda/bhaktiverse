@@ -44,6 +44,17 @@ class UserRegistrationForm(forms.ModelForm):
         if password and confirm_password and password != confirm_password:
             self.add_error('confirm_password', "Passwords do not match!")
         
+        email = cleaned_data.get('email')
+        if email:
+            email = email.strip().lower()
+            cleaned_data['email'] = email
+            if CustomUser.objects.filter(email=email).exists():
+                self.add_error('email', "Email already registered")
+        
+        residency = cleaned_data.get('residency')
+        if residency:
+            cleaned_data['residency'] = residency.strip().lower()
+
         return cleaned_data
 
     def save(self, commit=True):

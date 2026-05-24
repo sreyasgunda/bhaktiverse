@@ -25,7 +25,7 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     username = None  # Remove username field
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, db_index=True)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     interesting_skills = models.TextField(blank=True, null=True)
@@ -57,6 +57,8 @@ class Profile(models.Model):
     is_out_of_station = models.BooleanField(default=False)
     last_activity = models.DateTimeField(auto_now=True)
     residency = models.CharField(max_length=100, default='Main Residency')
+    # New nullable FK to Temple for reliable mapping (kept for backward compatibility)
+    temple = models.ForeignKey('temple.Temple', on_delete=models.PROTECT, null=True, blank=True, related_name='profiles')
 
     def __str__(self):
         return f"{self.user.name} ({self.role})"
@@ -86,7 +88,17 @@ def save_user_profile(sender, instance, **kwargs):
             'leader': 'leader',
         }
         db_role = role_map.get(instance.role, 'devotee')
+        changed = False
         if instance.profile.role != db_role:
             instance.profile.role = db_role
+            changed = True
+        
+        if instance.profile.residency:
+            normalized_residency = instance.profile.residency.strip().lower()
+            if instance.profile.residency != normalized_residency:
+                instance.profile.residency = normalized_residency
+                changed = True
+                
+        if changed:
             instance.profile.save()
 

@@ -81,8 +81,8 @@ def send_seva_completed_notification(user, seva, leader_emails):
 
     # To leaders
     if leader_emails:
-        lead_subject = f"Seva Completed: {seva.title}"
-        lead_body = f"Devotee {user.name} has completed the service '{seva.title}'."
+        lead_subject = f"Seva Completed: {seva.service_name}"
+        lead_body = f"Devotee {user.name} has completed the service '{seva.service_name}'."
         try:
             send_mail(lead_subject, lead_body, settings.DEFAULT_FROM_EMAIL, leader_emails, fail_silently=False)
         except Exception as e:
@@ -92,7 +92,14 @@ def send_overdue_alert(user, seva, leader_emails):
     if not leader_emails:
         return
     subject = "Service Not Completed"
-    body = f"Devotee: {user.name}\nService: {seva.title}\nScheduled Time: {seva.start_time.strftime('%I:%M %p')} - {seva.end_time.strftime('%I:%M %p')}\n\nService not completed on time."
+    
+    # We might not have start_time directly on seva, we use service_start_time
+    try:
+        start_time_str = seva.service_start_time.strftime('%I:%M %p')
+    except Exception:
+        start_time_str = "Unknown"
+        
+    body = f"Devotee: {user.name}\nService: {seva.service_name}\nScheduled Time: {start_time_str}\n\nService not completed on time."
     try:
         send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, leader_emails, fail_silently=False)
     except Exception as e:

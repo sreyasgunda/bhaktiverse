@@ -105,20 +105,8 @@ def devotee_dashboard(request):
         return redirect('dashboard:devotee_dashboard')
 
     # GET request:
-    # 1. Fetch or create ProgressStats for current month
+    # 1. Fetch or create ProgressStats for current month (Do NOT recalculate on GET to prevent resets)
     stats, created = ProgressStats.objects.get_or_create(user=user)
-    now_date = timezone.localtime(timezone.now()).date()
-    month_days = calendar.monthrange(now_date.year, now_date.month)[1]
-    
-    total_days = SadhanaEntry.objects.filter(
-        user=user,
-        sadhana_date__year=now_date.year,
-        sadhana_date__month=now_date.month
-    ).count()
-    
-    stats.total_submitted_days = total_days
-    stats.percentage_completed = min(100.0, (float(total_days) / float(month_days)) * 100.0)
-    stats.save()
 
     # 2. Fetch Seva Duties without creating dummy (only today's seva)
     today = timezone.localtime(timezone.now()).date()
@@ -314,41 +302,41 @@ def leader_dashboard(request):
     today = timezone.localtime(timezone.now()).date()
     residency = user.profile.residency
 
-    total_devotees = Profile.objects.filter(role='devotee', residency=residency).count()
+    total_devotees = Profile.objects.filter(role='devotee', residency__iexact=residency).count()
     
     services_today_count = DailySeva.objects.filter(
         service_date=today,
-        devotee__profile__residency=residency
+        devotee__profile__residency__iexact=residency
     ).count()
 
     pending_services_count = DailySeva.objects.filter(
         service_date=today,
         status='pending',
-        devotee__profile__residency=residency
+        devotee__profile__residency__iexact=residency
     ).count()
 
     completed_services_count = DailySeva.objects.filter(
         service_date=today,
         status='completed',
-        devotee__profile__residency=residency
+        devotee__profile__residency__iexact=residency
     ).count()
     
     pending_sevas = DailySeva.objects.filter(
         status='pending',
         service_date=today,
-        devotee__profile__residency=residency
+        devotee__profile__residency__iexact=residency
     ).order_by('service_start_time')
 
     completed_sevas = DailySeva.objects.filter(
         status='completed',
         service_date=today,
-        devotee__profile__residency=residency
+        devotee__profile__residency__iexact=residency
     ).order_by('-service_start_time')[:10]
     
     services = MasterService.objects.all()
     available_devotees = CustomUser.objects.filter(
         profile__role='devotee', 
-        profile__residency=user.profile.residency, 
+        profile__residency__iexact=residency, 
         profile__is_out_of_station=False
     )
 
@@ -454,7 +442,7 @@ def generate_weekly_report(request):
     
     devotees = CustomUser.objects.filter(
         profile__role='devotee',
-        profile__residency=request.user.profile.residency
+        profile__residency__iexact=request.user.profile.residency
     )
     report_data = []
     
