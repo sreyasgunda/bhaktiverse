@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-^&jk!czb4mo2(9fz6+kn8m8j#jzk@gwy^n@p#z@=w87%vo4drv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["bhaktiverse.onrender.com"]
+ALLOWED_HOSTS = [
+    "bhaktiverse.onrender.com",
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # Application definition
@@ -148,12 +152,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Email Configuration (SMTP)
+# Email Configuration (SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'gsreyaskumar_cse235a0510@mgit.ac.in')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'dbcsljlbblaxdxbe')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_FAIL_SILENTLY = False
 
 DEFAULT_FROM_EMAIL = f"BhaktiVerse <{EMAIL_HOST_USER}>"
