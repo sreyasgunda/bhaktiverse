@@ -165,6 +165,8 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_FAIL_SILENTLY = False
 
 DEFAULT_FROM_EMAIL = f"BhaktiVerse <{EMAIL_HOST_USER}>"
+print("EMAIL_HOST_USER =", EMAIL_HOST_USER)
+print("EMAIL_HOST_PASSWORD =", EMAIL_HOST_PASSWORD)
 
 # OpenAI API Key
 OPENAI_API_KEY = 'your_openai_api_key_here'      # Replace with your actual key
