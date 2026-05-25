@@ -351,14 +351,18 @@ def send_daily_assignment_emails():
 
             print(f"DEBUG → sending assignment mail to {user.email}")
 
-            send_seva_assigned_notification(user, seva)
+            try:
 
-            seva.assignment_email_sent = True
-            seva.save()
+                send_seva_assigned_notification(user, seva)
 
-            print("EMAIL SENT → Daily Seva Assignment")
+                seva.assignment_email_sent = True
+                seva.save()
 
+                print("EMAIL SENT → Daily Seva Assignment")
 
+            except Exception as e:
+
+                print("EMAIL ERROR →", str(e))
 def start_scheduler():
     import os
     from django.conf import settings
